@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>德语学习网站</title>
+    <style>
+        /* 页面整体样式 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* 垂直居中 */
+            align-items: center; /* 水平居中 */
+            height: 100vh; /* 让页面填满视口 */
+            background: url('background.jpg') no-repeat center center/cover; 
+        }
+
+        /* 大标题板块 */
+        .title-container {
+            background: rgba(255, 255, 255, 0.85); /* 半透明背景 */
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 大标题样式 */
+        h1 {
+            color: #007bff;
+            font-size: 60px; /* 标题更大 */
+            font-weight: bold;
+            text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transform: translateY(50px);
+            animation: fadeInUp 1.5s ease-out forwards;
+            margin-bottom: 10px;
+        }
+
+        /* 英文副标题 */
+        h2 {
+            font-size: 35px;
+            color: #555;
+            opacity: 0;
+            animation: fadeIn 2s ease-in-out 0.5s forwards;
+            margin-top: 0;
+        }
+
+        /* 互动按钮 */
+        .start-btn {
+            display: inline-block;
+            padding: 15px 30px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #fff;
+            background-color: #28a745;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 25px;
+            transition: background-color 0.3s, transform 0.2s;
+            opacity: 0;
+            animation: fadeIn 2s ease-in-out 1s forwards;
+        }
+
+        /* 按钮悬停效果 */
+        .start-btn:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+
+        /* 按钮点击效果 */
+        .start-btn:active {
+            background-color: #1e7e34;
+            transform: scale(0.95);
+        }
+
+        /* 底部信息 */
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            text-align: center;
+        }
+
+        /* 学校名称样式 */
+        .school {
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff; /* 变成白色 */
+            opacity: 0;
+            animation: fadeIn 2s ease-in-out 1s forwards;
+        }
+
+        /* 学校英文名 */
+        .school-en {
+            font-size: 20px;
+            color: #fff; /* 变成白色 */
+            opacity: 0;
+            animation: fadeIn 2s ease-in-out 1.2s forwards;
+        }
+
+        /* 姓名列表样式 */
+        .names {
+            font-size: 14px; /* 调小字体 */
+            color: #fff; /* 变成白色 */
+            opacity: 0;
+            animation: fadeIn 2s ease-in-out 1.5s forwards;
+            text-align: center;
+            margin-top: 5px;
+        }
+
+        /* 标题动画 - 淡入 + 上移 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 文字淡入动画 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 大标题部分 -->
+    <div class="title-container">
+        <h1>你好，欢迎学习德语！</h1>
+        <h2>Hello, welcome to learning German!</h2>
+        <button class="start-btn" onclick="startLearning()">Let's start!</button>
+    </div>
+
+    <!-- 底部信息 -->
+    <div class="footer">
+        <p class="school">海南比勒费尔德应用科学大学 24CS</p>
+        <p class="school-en">Hainan Bielefeld University of Applied Sciences</p>
+        <p class="names">敬钰娟 黄雯琳 周彦希 陈思言 申博瑜 曾学阳 孟涵俊 蔡智轩</p>
+    </div>
+
+    <!-- 交互功能 -->
+    <script>
+        function startLearning() {
+            alert("欢迎进入德语学习网站！敬请期待更多功能...");
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
