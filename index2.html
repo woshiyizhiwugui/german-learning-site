@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>德语学习网站</title>
+    <style>
+        /* 页面整体样式 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: url('background.jpg') no-repeat center center/cover;
+        }
+
+        /* 大标题板块 */
+        .title-container {
+            background: rgba(255, 255, 255, 0.85);
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 大标题样式 */
+        h1 {
+            color: #007bff;
+            font-size: 60px;
+            font-weight: bold;
+            text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transform: translateY(50px);
+            animation: fadeInUp 1.5s ease-out forwards;
+            margin-bottom: 10px;
+        }
+
+        /* 英文副标题 */
+        h2 {
+            font-size: 35px;
+            color: #555;
+            opacity: 0;
+            animation: fadeIn 2s ease-in-out 0.5s forwards;
+            margin-top: 0;
+        }
+
+        /* 互动按钮 */
+        .start-btn {
+            display: inline-block;
+            padding: 15px 30px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #fff;
+            background-color: #28a745;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 25px;
+            transition: background-color 0.3s, transform 0.2s;
+            opacity: 0;
+            animation: fadeIn 2s ease-in-out 1s forwards;
+        }
+
+        /* 按钮悬停效果 */
+        .start-btn:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+
+        /* 按钮点击效果 */
+        .start-btn:active {
+            background-color: #1e7e34;
+            transform: scale(0.95);
+        }
+
+        /* 底部信息 */
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            text-align: center;
+        }
+
+        /* 学校名称样式 */
+        .school {
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff;
+            opacity: 0;
+            animation: fadeIn 2s ease-in-out 1s forwards;
+        }
+
+        /* 学校英文名 */
+        .school-en {
+            font-size: 20px;
+            color: #fff;
+            opacity: 0;
+            animation: fadeIn 2s ease-in-out 1.2s forwards;
+        }
+
+        /* 姓名列表样式 */
+        .names {
+            font-size: 14px;
+            color: #fff;
+            opacity: 0;
+            animation: fadeIn 2s ease-in-out 1.5s forwards;
+            text-align: center;
+            margin-top: 5px;
+        }
+
+        /* 标题动画 - 淡入 + 上移 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 文字淡入动画 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* 互动界面 */
+        .interaction {
+            display: none;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            width: 80%;
+            max-width: 600px;
+        }
+
+        /* 选择题按钮 */
+        .option {
+            display: block;
+            margin: 10px;
+            padding: 10px;
+            border: 2px solid #007bff;
+            cursor: pointer;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+
+        .option:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        /* 得分页面 */
+        .score-page {
+            display: none;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            width: 80%;
+            max-width: 600px;
+        }
+
+        /* 正确与否显示 */
+        .feedback {
+            font-size: 20px;
+            margin-top: 20px;
+        }
+
+        .correct {
+            color: green;
+        }
+
+        .incorrect {
+            color: red;
+        }
+
+        /* 排行榜样式 */
+        .leaderboard {
+            margin-top: 20px;
+        }
+
+        .leaderboard h2 {
+            color: #007bff;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        .rank {
+            width: 30px;
+            height: 30px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 15px;
+        }
+
+        .leaderboard-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .name {
+            font-weight: bold;
+        }
+
+        .points {
+            color: #666;
+        }
+
+        /* 首页排行榜按钮 */
+        .leaderboard-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .leaderboard-btn:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .leaderboard-btn:active {
+            background-color: #004080;
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body>
+    <!-- 大标题部分 -->
+    <div class="title-container">
+        <h1>你好，欢迎学习德语！</h1>
+        <h2>Hello, welcome to learning German!</h2>
+        <button class="start-btn" onclick="startLearning()">Let's start!</button>
+        <button class="leaderboard-btn" onclick="showLeaderboard()">查看排行榜</button>
+    </div>
+
+    <!-- 互动界面 -->
+    <div id="interactionPage" class="interaction">
+        <h1>第一课：基础德语</h1>
+        <p>请输入你的名字:</p>
+        <input type="text" id="userName" placeholder="输入你的名字">
+        <button class="start-btn" onclick="startQuiz()">开始答题</button>
+    </div>
+
+    <!-- 题目界面 -->
+    <div id="quizPage" class="interaction">
+        <h1 id="questionTitle"></h1>
+        <div id="optionsContainer"></div>
+        <div id="feedback"></div>
+    </div>
+
+    <!-- 得分页面 -->
+    <div id="scorePage" class="score-page">
+        <h1>得分</h1>
+        <p id="score"></p>
+        <div class="leaderboard">
+            <h2>所有答题者得分情况</h2>
+            <div id="leaderboardList"></div>
+        </div>
+        <button class="start-btn" onclick="goBack()">返回主页</button>
+    </div>
+
+    <!-- 底部信息 -->
+    <div class="footer">
+        <p class="school">海南比勒费尔德应用科学大学 24CS</p>
+        <p class="school-en">Hainan Bielefeld University of Applied Sciences</p>
+        <p class="names">敬钰娟 黄雯琳 周彦希 陈思言 申博瑜 曾学阳 孟涵俊 蔡智轩</p>
+    </div>
+
+    <!-- 交互功能 -->
+    <script>
+        let score = 0;
+        let currentQuestion = 0;
+        let userName = '';
+
+        // 基础德语问题
+        const questions = [
+            {
+                question: "“苹果” 的德语是什么？",
+                options: ["Katze", "Hund", "Apfel", "Haus"],
+                correctAnswer: "Apfel"
+            },
+            {
+                question: "“狗” 的德语是什么？",
+                options: ["Hund", "Apfel", "Katze", "Buch"],
+                correctAnswer: "Hund"
+            },
+            {
+                question: "“猫” 的德语是什么？",
+                options: ["Katze", "Apfel", "Haus", "Tisch"],
+                correctAnswer: "Katze"
+            },
+            {
+                question: "“房子” 的德语是什么？",
+                options: ["Haus", "Apfel", "Katze", "Stuhl"],
+                correctAnswer: "Haus"
+            },
+            {
+                question: "“书” 的德语是什么？",
+                options: ["Buch", "Apfel", "Haus", "Tisch"],
+                correctAnswer: "Buch"
+            }
+        ];
+
+        // 进入学习界面
+        function startLearning() {
+            document.querySelector(".title-container").style.display = "none";
+            document.querySelector(".footer").style.display = "none";
+            document.getElementById("interactionPage").style.display = "block";
+        }
+
+        // 开始答题
+        function startQuiz() {
+            userName = document.getElementById("userName").value;
+            if (!userName) {
+                alert("请输入你的名字！");
+                return;
+            }
+            document.getElementById("interactionPage").style.display = "none";
+            document.getElementById("quizPage").style.display = "block";
+            loadQuestion();
+        }
+
+        // 加载题目
+        function loadQuestion() {
+            const question = questions[currentQuestion];
+            document.getElementById("questionTitle").textContent = `第 ${currentQuestion + 1} 题: ${question.question}`;
+            const optionsContainer = document.getElementById("optionsContainer");
+            optionsContainer.innerHTML = '';
+            // 随机打乱选项顺序
+            const shuffledOptions = [...question.options];
+            for (let i = shuffledOptions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledOptions[i], shuffledOptions[j]] = [shuffledOptions[j], shuffledOptions[i]];
+            }
+            shuffledOptions.forEach(option => {
+                const optionDiv = document.createElement("div");
+                optionDiv.classList.add("option");
+                optionDiv.textContent = option;
+                optionDiv.onclick = () => checkAnswer(optionDiv, question.correctAnswer);
+                optionsContainer.appendChild(optionDiv);
+            });
+        }
+
+        // 检查答案
+        function checkAnswer(element, correctAnswer) {
+            const selectedAnswer = element.textContent.trim();
+            let feedbackText = '';
+            if (selectedAnswer === correctAnswer) {
+                score += 20;
+                element.style.backgroundColor = "lightgreen";
+                feedbackText = '正确！非常棒！';
+                element.classList.add('correct');
+            } else {
+                element.style.backgroundColor = "lightcoral";
+                feedbackText = '错误！再接再厉！';
+                element.classList.add('incorrect');
+            }
+            showFeedback(feedbackText);
+            setTimeout(nextQuestion, 1000);
+        }
+
+        // 显示反馈信息
+        function showFeedback(feedbackText) {
+            const feedbackDiv = document.getElementById("feedback");
+            feedbackDiv.textContent = feedbackText;
+        }
+
+        // 下一题
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                showScore();
+            }
+        }
+
+        // 显示得分
+        function showScore() {
+            document.getElementById("quizPage").style.display = "none";
+            document.getElementById("scorePage").style.display = "block";
+            document.getElementById("score").textContent = `${userName}，你的得分是：${score} 分`;
+
+            // 从本地存储获取所有答题者数据
+            let allScores = JSON.parse(localStorage.getItem('allScores')) || [];
+            
+            // 添加当前用户的数据
+            allScores.push({ name: userName, score: score });
+            
+            // 按分数从高到低排序
+            allScores.sort((a, b) => b.score - a.score);
+            
+            // 保存回本地存储
+            localStorage.setItem('allScores', JSON.stringify(allScores));
+            
+            // 显示所有答题者得分情况
+            updateLeaderboard();
+        }
+
+        // 更新排行榜
+        function updateLeaderboard() {
+            const leaderboardList = document.getElementById('leaderboardList');
+            leaderboardList.innerHTML = '';
+            let allScores = JSON.parse(localStorage.getItem('allScores')) || [];
+            allScores.forEach((entry, index) => {
+                const leaderboardItem = document.createElement('div');
+                leaderboardItem.classList.add('leaderboard-item');
+                leaderboardItem.innerHTML = `
+                    <div class="rank">${index + 1}</div>
+                    <div class="leaderboard-info">
+                        <div class="name">${entry.name}</div>
+                        <div class="points">${entry.score} 分</div>
+                    </div>
+                `;
+                leaderboardList.appendChild(leaderboardItem);
+            });
+        }
+
+        // 显示排行榜
+        function showLeaderboard() {
+            document.querySelector(".title-container").style.display = "none";
+            document.querySelector(".footer").style.display = "none";
+            document.getElementById("scorePage").style.display = "block";
+            document.getElementById("score").textContent = "排行榜";
+            updateLeaderboard();
+        }
+
+        // 返回主页
+        function goBack() {
+            location.reload();
+        }
+    </script>
+</body>
+</html>
