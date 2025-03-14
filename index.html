@@ -186,6 +186,46 @@
             color: red;
         }
 
+        /* 排行榜样式 */
+        .leaderboard {
+            margin-top: 20px;
+        }
+
+        .leaderboard h2 {
+            color: #007bff;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        .rank {
+            width: 30px;
+            height: 30px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 15px;
+        }
+
+        .leaderboard-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .name {
+            font-weight: bold;
+        }
+
+        .points {
+            color: #666;
+        }
     </style>
 </head>
 <body>
@@ -215,6 +255,10 @@
     <div id="scorePage" class="score-page">
         <h1>得分</h1>
         <p id="score"></p>
+        <div class="leaderboard">
+            <h2>排行榜</h2>
+            <div id="leaderboardList"></div>
+        </div>
         <button class="start-btn" onclick="goBack()">返回主页</button>
     </div>
 
@@ -231,6 +275,7 @@
         let currentQuestion = 0;
         let userName = '';
 
+        // 基础德语问题
         const questions = [
             {
                 question: "“苹果” 的德语是什么？",
@@ -239,22 +284,22 @@
             },
             {
                 question: "“狗” 的德语是什么？",
-                options: ["Hund", "Apfel", "Katze", "Haus"],
+                options: ["Hund", "Apfel", "Katze", "Buch"],
                 correctAnswer: "Hund"
             },
             {
                 question: "“猫” 的德语是什么？",
-                options: ["Hund", "Apfel", "Katze", "Haus"],
+                options: ["Katze", "Apfel", "Haus", "Tisch"],
                 correctAnswer: "Katze"
             },
             {
                 question: "“房子” 的德语是什么？",
-                options: ["Hund", "Apfel", "Katze", "Haus"],
+                options: ["Haus", "Apfel", "Katze", "Stuhl"],
                 correctAnswer: "Haus"
             },
             {
                 question: "“书” 的德语是什么？",
-                options: ["Buch", "Apfel", "Katze", "Haus"],
+                options: ["Buch", "Apfel", "Haus", "Tisch"],
                 correctAnswer: "Buch"
             }
         ];
@@ -284,7 +329,13 @@
             document.getElementById("questionTitle").textContent = `第 ${currentQuestion + 1} 题: ${question.question}`;
             const optionsContainer = document.getElementById("optionsContainer");
             optionsContainer.innerHTML = '';
-            question.options.forEach(option => {
+            // 随机打乱选项顺序
+            const shuffledOptions = [...question.options];
+            for (let i = shuffledOptions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledOptions[i], shuffledOptions[j]] = [shuffledOptions[j], shuffledOptions[i]];
+            }
+            shuffledOptions.forEach(option => {
                 const optionDiv = document.createElement("div");
                 optionDiv.classList.add("option");
                 optionDiv.textContent = option;
@@ -332,6 +383,34 @@
             document.getElementById("quizPage").style.display = "none";
             document.getElementById("scorePage").style.display = "block";
             document.getElementById("score").textContent = `${userName}，你的得分是：${score} 分`;
+
+            // 从本地存储获取排行榜数据
+            let leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
+            
+            // 添加当前用户的数据
+            leaderboard.push({ name: userName, score: score });
+            
+            // 按分数从高到低排序
+            leaderboard.sort((a, b) => b.score - a.score);
+            
+            // 保存回本地存储
+            localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+            
+            // 显示排行榜
+            const leaderboardList = document.getElementById('leaderboardList');
+            leaderboardList.innerHTML = '';
+            leaderboard.forEach((entry, index) => {
+                const leaderboardItem = document.createElement('div');
+                leaderboardItem.classList.add('leaderboard-item');
+                leaderboardItem.innerHTML = `
+                    <div class="rank">${index + 1}</div>
+                    <div class="leaderboard-info">
+                        <div class="name">${entry.name}</div>
+                        <div class="points">${entry.score} 分</div>
+                    </div>
+                `;
+                leaderboardList.appendChild(leaderboardItem);
+            });
         }
 
         // 返回主页
@@ -341,4 +420,3 @@
     </script>
 </body>
 </html>
-
