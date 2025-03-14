@@ -256,7 +256,7 @@
         <h1>得分</h1>
         <p id="score"></p>
         <div class="leaderboard">
-            <h2>排行榜</h2>
+            <h2>所有答题者得分情况</h2>
             <div id="leaderboardList"></div>
         </div>
         <button class="start-btn" onclick="goBack()">返回主页</button>
@@ -384,22 +384,22 @@
             document.getElementById("scorePage").style.display = "block";
             document.getElementById("score").textContent = `${userName}，你的得分是：${score} 分`;
 
-            // 从本地存储获取排行榜数据
-            let leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
+            // 从本地存储获取所有答题者数据
+            let allScores = JSON.parse(localStorage.getItem('allScores')) || [];
             
             // 添加当前用户的数据
-            leaderboard.push({ name: userName, score: score });
+            allScores.push({ name: userName, score: score });
             
             // 按分数从高到低排序
-            leaderboard.sort((a, b) => b.score - a.score);
+            allScores.sort((a, b) => b.score - a.score);
             
             // 保存回本地存储
-            localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+            localStorage.setItem('allScores', JSON.stringify(allScores));
             
-            // 显示排行榜
+            // 显示所有答题者得分情况
             const leaderboardList = document.getElementById('leaderboardList');
             leaderboardList.innerHTML = '';
-            leaderboard.forEach((entry, index) => {
+            allScores.forEach((entry, index) => {
                 const leaderboardItem = document.createElement('div');
                 leaderboardItem.classList.add('leaderboard-item');
                 leaderboardItem.innerHTML = `
