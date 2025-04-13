@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>德语词汇闯关小游戏</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Press Start 2P', cursive;
+      background-color: #000;
+      overflow: hidden;
+    }
+
+    #game {
+      width: 100vw;
+      height: 100vh;
+      background-image: url("背景图.png");
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+
+    .path {
+      width: 100px;
+      height: 100px;
+      background-image: url("宝箱.jpg");
+      background-size: cover;
+      position: absolute;
+      text-align: center;
+      line-height: 120px;
+      font-size: 22px;
+      font-weight: bold;
+      color: white;
+      cursor: pointer;
+      border-radius: 8px;
+      box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .sign {
+      position: absolute;
+      top: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 18px;
+      background: rgba(0, 0, 0, 0.7);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .character {
+      width: 50px;
+      height: 50px;
+      background-image: url("芙芙.png");
+      background-size: cover;
+      position: absolute;
+      transform: translate(-50%, -50%);
+      transition: top 0.1s ease, left 0.1s ease;
+    }
+
+    .hole {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      background: radial-gradient(circle, #000 40%, transparent 70%);
+      border-radius: 50%;
+      z-index: 10;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(0.2);
+        opacity: 0;
+      }
+    }
+
+    .hole.fall {
+      animation: fall 0.5s ease-out forwards;
+    }
+
+    .score-board {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 16px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 10px;
+      box-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+    }
+
+    .restart-btn {
+      position: absolute;
+      top: 80px;
+      left: 20px;
+      font-size: 14px;
+      padding: 8px 16px;
+      background-color: #ff5555;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      display: none;
+    }
+
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+  </style>
+</head>
+<body>
+  <div id="game">
+    <div class="info-text" id="infoText">欢迎来到德语词汇闯关小游戏！使用方向键（↑ ↓ ← →）移动</div>
+    <div class="sign" id="question"></div>
+    <div class="character" id="character"></div>
+    <div class="score-board" id="scoreBoard">得分：0</div>
+    <button class="restart-btn" id="restartBtn">重新开始</button>
+  </div>
+
+  <script>
+    const character = document.getElementById("character");
+    const game = document.getElementById("game");
+    const question = document.getElementById("question");
+    const scoreBoard = document.getElementById("scoreBoard");
+    const restartBtn = document.getElementById("restartBtn");
+
+    const defaultX = window.innerWidth / 2;
+    const defaultY = window.innerHeight * 0.3;
+
+    let charX = defaultX;
+    let charY = defaultY;
+    let keysPressed = {};
+    let currentLevel = 0;
+    let canCollide = true;
+    let score = 0;
+
+    const levels = [
+      { question: "Apfel 是什么意思？", options: [ { word: "苹果", left: "30%", correct: true }, { word: "香蕉", left: "60%", correct: false } ] },
+      { question: "哪一个是 '牛奶' 的德语？", options: [ { word: "Milch", left: "30%", correct: true }, { word: "Brot", left: "60%", correct: false } ] },
+      { question: "Tisch 是什么意思？", options: [ { word: "桌子", left: "40%", correct: true }, { word: "椅子", left: "60%", correct: false } ] },
+      { question: "哪一个是 '学校' 的德语？", options: [ { word: "Schule", left: "30%", correct: true }, { word: "Lehrer", left: "60%", correct: false } ] },
+      { question: "Haus 是什么意思？", options: [ { word: "房子", left: "30%", correct: true }, { word: "门", left: "60%", correct: false } ] },
+      { question: "哪一个是 '水' 的德语？", options: [ { word: "Wasser", left: "30%", correct: true }, { word: "Saft", left: "60%", correct: false } ] },
+      { question: "Hund 是什么意思？", options: [ { word: "狗", left: "30%", correct: true }, { word: "猫", left: "60%", correct: false } ] },
+      { question: "哪一个是 '老师' 的德语？", options: [ { word: "Lehrer", left: "30%", correct: true }, { word: "Schüler", left: "60%", correct: false } ] },
+      { question: "Buch 是什么意思？", options: [ { word: "书", left: "30%", correct: true }, { word: "笔", left: "60%", correct: false } ] },
+      { question: "哪一个是 '城市' 的德语？", options: [ { word: "Stadt", left: "30%", correct: true }, { word: "Land", left: "60%", correct: false } ] }
+    ];
+
+    function updateCharacterPosition() {
+      character.style.left = `${charX}px`;
+      character.style.top = `${charY}px`;
+    }
+
+    function updateScore() {
+      scoreBoard.textContent = `得分：${score}`;
+    }
+
+    function moveCharacter() {
+      const step = 4;
+      if (keysPressed["ArrowLeft"]) charX -= step;
+      if (keysPressed["ArrowRight"]) charX += step;
+      if (keysPressed["ArrowUp"]) charY -= step;
+      if (keysPressed["ArrowDown"]) charY += step;
+      updateCharacterPosition();
+      checkCollision();
+    }
+
+    document.addEventListener("keydown", (e) => { keysPressed[e.key] = true; });
+    document.addEventListener("keyup", (e) => { keysPressed[e.key] = false; });
+    setInterval(moveCharacter, 20);
+
+    function loadLevel(levelIndex) {
+      const level = levels[levelIndex];
+      if (!level) {
+        question.textContent = "恭喜你完成所有关卡！🎉";
+        return;
+      }
+      question.textContent = level.question;
+      document.querySelectorAll(".path").forEach(p => p.remove());
+      level.options.forEach(opt => {
+        const path = document.createElement("div");
+        path.className = "path";
+        path.style.top = "60%";
+        path.style.left = opt.left;
+        path.textContent = opt.word;
+        path.dataset.correct = opt.correct;
+        game.appendChild(path);
+      });
+      updateCharacterPosition();
+    }
+
+    function endGame() {
+      question.textContent = `游戏结束！你的得分是：${score}`;
+      restartBtn.style.display = "block";
+    }
+
+    function checkCollision() {
+      if (!canCollide) return;
+      const paths = document.querySelectorAll(".path");
+      const charRect = character.getBoundingClientRect();
+      paths.forEach(path => {
+        const pathRect = path.getBoundingClientRect();
+        const isOverlap = !(charRect.right < pathRect.left || charRect.left > pathRect.right || charRect.bottom < pathRect.top || charRect.top > pathRect.bottom);
+        if (isOverlap) {
+          canCollide = false;
+          const isCorrect = path.dataset.correct === "true";
+          if (isCorrect) {
+            score++;
+            updateScore();
+            charX = defaultX;
+            charY = defaultY;
+            character.style.transition = "transform 0.2s ease";
+            character.style.transform = "translate(-50%, -50%) scale(1)";
+            updateCharacterPosition();
+            setTimeout(() => {
+              currentLevel++;
+              loadLevel(currentLevel);
+              canCollide = true;
+            }, 300);
+          } else {
+            const hole = document.createElement("div");
+            hole.className = "hole";
+            hole.style.left = `${charX - 30}px`;
+            hole.style.top = `${charY - 30}px`;
+            game.appendChild(hole);
+            setTimeout(() => { hole.classList.add("fall"); }, 10);
+            character.style.transition = "transform 0.5s ease";
+            character.style.transform = "translate(-50%, -50%) scale(0.2)";
+            setTimeout(() => {
+              alert(`答错了！游戏结束！\n你的得分是：${score}`);
+              endGame();
+            }, 600);
+          }
+        }
+      });
+    }
+
+    restartBtn.addEventListener("click", () => {
+      location.reload();
+    });
+
+    loadLevel(currentLevel);
+    updateCharacterPosition();
+  </script>
+</body>
+</html>

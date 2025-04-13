@@ -5,8 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>德语学习网站</title>
     <style>
+        
+
         /* 页面整体样式 */
         body {
+            
+
             font-family: Arial, sans-serif;
             margin: 0;
             display: flex;
@@ -62,7 +66,12 @@
             transition: background-color 0.3s, transform 0.2s;
             opacity: 0;
             animation: fadeIn 2s ease-in-out 1s forwards;
+        
         }
+        
+
+        
+
 
         /* 按钮悬停效果 */
         .start-btn:hover {
@@ -226,6 +235,31 @@
         .points {
             color: #666;
         }
+
+        /* 首页排行榜按钮 */
+        .leaderboard-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .leaderboard-btn:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .leaderboard-btn:active {
+            background-color: #004080;
+            transform: scale(0.95);
+        }
     </style>
 </head>
 <body>
@@ -234,6 +268,7 @@
         <h1>你好，欢迎学习德语！</h1>
         <h2>Hello, welcome to learning German!</h2>
         <button class="start-btn" onclick="startLearning()">Let's start!</button>
+        <button class="leaderboard-btn" onclick="showLeaderboard()">查看排行榜</button>
     </div>
 
     <!-- 互动界面 -->
@@ -243,7 +278,10 @@
         <input type="text" id="userName" placeholder="输入你的名字">
         <button class="start-btn" onclick="startQuiz()">开始答题</button>
     </div>
-
+         
+        <a href="test.html">
+         <button>🎮 进入德语词汇闯关小游戏</button>
+         </a>
     <!-- 题目界面 -->
     <div id="quizPage" class="interaction">
         <h1 id="questionTitle"></h1>
@@ -397,8 +435,14 @@
             localStorage.setItem('allScores', JSON.stringify(allScores));
             
             // 显示所有答题者得分情况
+            updateLeaderboard();
+        }
+
+        // 更新排行榜
+        function updateLeaderboard() {
             const leaderboardList = document.getElementById('leaderboardList');
             leaderboardList.innerHTML = '';
+            let allScores = JSON.parse(localStorage.getItem('allScores')) || [];
             allScores.forEach((entry, index) => {
                 const leaderboardItem = document.createElement('div');
                 leaderboardItem.classList.add('leaderboard-item');
@@ -411,6 +455,15 @@
                 `;
                 leaderboardList.appendChild(leaderboardItem);
             });
+        }
+
+        // 显示排行榜
+        function showLeaderboard() {
+            document.querySelector(".title-container").style.display = "none";
+            document.querySelector(".footer").style.display = "none";
+            document.getElementById("scorePage").style.display = "block";
+            document.getElementById("score").textContent = "排行榜";
+            updateLeaderboard();
         }
 
         // 返回主页
